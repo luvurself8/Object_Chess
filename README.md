@@ -19,3 +19,15 @@
 
 ## 추가 사항
 - 테스트 코드 작성
+
+## 네이밍 컨벤션
+- 체스판: ChessBoard
+  - 행: Row (Rank) 랭크는 가로줄을 의미하며, 1부터 8까지 숫자로 표현됩니다.
+  - 열: Column (File) 파일은 세로줄을 의미하며, a부터 h까지 알파벳으로 표현됩니다.
+- 기물: Piece
+  - 폰: Pawn
+  - 나이트: Knight
+  - 비숍: Bishop
+  - 룩: Rook
+  - 퀸: Queen
+  - 킹: King
