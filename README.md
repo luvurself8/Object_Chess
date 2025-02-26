@@ -54,12 +54,12 @@
 - [ ] web api로 변환
 - [ ] 서버에 올리기
 - [ ] [4인 체스](https://www.chess.com/ko/terms/4-player-chess-ko#what-is-4-player-chess) 모드 추가
-
+---
 ## 참고
 - 체스 두는 법: https://www.chess.com/ko/tiesuwosuru
 - 우테코 체스 미션: https://github.com/woowacourse/java-chess?tab=readme-ov-file
 - ChessGpt: https://wikidocs.net/219077
-
+---
 ## 네이밍 컨벤션
 - 체스판: ChessBoard
   - 행: Row (Rank) 랭크는 가로줄을 의미하며, 1부터 8까지 숫자로 표현됩니다.
