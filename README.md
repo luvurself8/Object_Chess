@@ -1,9 +1,6 @@
 # go-chess
 - 객체 지향 프로그래밍의 이해도를 올리기 위해 개발해보는 점진적 체스 프로젝트
 ---
-## 체스 두는 법
-- https://www.chess.com/ko/tiesuwosuru
----
 ## 체크 포인트
 ### ♟️ [기본 체스 구성](https://www.chess.com/ko/terms/chess-pieces-ko) (체스판 & 체스 기물)
 - [ ] 체스판 구성 (8x8)
