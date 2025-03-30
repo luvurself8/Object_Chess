@@ -1,4 +1,4 @@
-package domain;
+package domain.Enum;
 
 public enum Direction {
     DIAGNOAL

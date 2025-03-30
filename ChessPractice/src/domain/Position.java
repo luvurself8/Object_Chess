@@ -1,6 +1,5 @@
 package domain;
 
-import static domain.Direction.*;
 import static java.lang.Math.abs;
 
 public class Position {
@@ -55,7 +54,7 @@ public class Position {
         }
 
         // Cloumn getter
-        public int getColumn (){
+        public char getColumn (){
             return this.column;
         }
 
@@ -93,7 +92,7 @@ public class Position {
         this.row.setRow(row) ;
     }
     public void setRow (Row row) {
-        this.row=row ;
+        this.row = row ;
     }
     public void setColumn(char column){
         this.column.setColumn (column);

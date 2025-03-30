@@ -1,7 +1,8 @@
 package domain;
 
-import static domain.Direction.*;
-import static domain.Direction.NONE;
+import domain.Enum.Direction;
+
+import static domain.Enum.Direction.*;
 import static java.lang.Math.abs;
 
 public class Movement {
