@@ -1,6 +1,10 @@
 package domain;
 
 import domain.Enum.Direction;
+import domain.Enum.Team;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static domain.Enum.Direction.*;
 import static java.lang.Math.abs;
@@ -9,77 +13,78 @@ public class Movement {
 
     protected Direction dir;
     protected int length;
+    protected List <Position> positionBetween = new ArrayList<>();
 
-    public Movement (){
-
-    }
     public Movement (Direction dir, int length){
         this.dir = dir;
         this.length = length;
     }
-    public void setDirection (Direction dir){
-        this.dir = dir;
-    }
-    public void setLength (int length){
-        this.length = length;
-    }
-    public Direction getDirection (){
-        return this.dir;
-    }
-    public int getLength (){
-        return this.length;
-    }
 
-    public  Movement getDirection (int gapRow , int gapColumn ){
-        /*
-        int nowRow = source.getRow().getRow();
-        int nowColumn = ((int) source.getColumn().getColumn());
-        int targetRow = source.getRow().getRow();
-        int targetColumn = ((int) source.getColumn().getColumn());
+    private static final char COLUMN_START = 'a';
 
-        int multiple = 1;
-        if (team == Team.BLACK) {
-            multiple = -1;
-        }
+    public Movement(Position source, Position target, Team team) {
+        int nowRow = source.getRow();
+        char nowColumnChar = source.getColumn();
+        int nowColumn = nowColumnChar - COLUMN_START;
 
-        int gapRow = multiple * (nowRow - targetRow);
-        int gapColumn = multiple * (nowColumn - targetColumn);
-        */
-        Movement move = new Movement();
-        if (gapRow == 0 && gapColumn == 0){
+        int targetRow = target.getRow();
+        char targetColumnChar = target.getColumn();
+        int targetColumn = targetColumnChar - COLUMN_START;
+
+        int rowDiff = targetRow - nowRow;
+        int colDiff = targetColumn - nowColumn;
+
+        int moveDirection = (team == Team.BLACK) ? -1 : 1;
+
+        int gapRow = moveDirection * rowDiff;
+        int gapColumn = moveDirection * colDiff;
+
+        if (gapRow == 0 && gapColumn == 0) {
             throw new IllegalArgumentException("Same Position");
+        } else if (abs(gapRow) == abs(gapColumn)) {
+            this.dir = DIAGNOAL;
+            this.length = abs(gapRow);
+            int rowIncrement = (gapRow > 0) ? 1 : -1;
+            int colIncrement = (gapColumn > 0) ? 1 : -1;
+            for (int i = 1; i < abs(gapRow); i++) {
+                positionBetween.add(new Position(nowRow + moveDirection * i * rowIncrement, (char) (nowColumnChar + i * colIncrement)));
+            }
+        } else if ((abs(gapRow) == 1 && abs(gapColumn) == 2) || (abs(gapRow) == 2 && abs(gapColumn) == 1)) {
+            this.dir = L;
+            this.length = Math.max(abs(gapRow), abs(gapColumn));
+            if (abs(gapRow) == 1 && abs(gapColumn) == 2) {
+                positionBetween.add(new Position(targetRow, (char) (nowColumnChar + moveDirection * 1)));
+                positionBetween.add(new Position(targetRow, (char) (nowColumnChar + moveDirection * 2)));
+            } else { // abs(gapRow) == 2 && abs(gapColumn) == 1
+                positionBetween.add(new Position(nowRow + moveDirection * 1, targetColumnChar));
+                positionBetween.add(new Position(nowRow + moveDirection * 2, targetColumnChar));
+            }
+        } else if (gapRow == 0 && gapColumn != 0) {
+            this.dir = (gapColumn > 0) ? RIGHT : LEFT;
+            this.length = abs(gapColumn);
+            int colIncrement = (gapColumn > 0) ? 1 : -1;
+            for (int i = 1; i < abs(gapColumn); i++) {
+                positionBetween.add(new Position(nowRow, (char) (nowColumnChar + i * colIncrement)));
+            }
+        } else if (gapRow != 0 && gapColumn == 0) {
+            this.dir = (gapRow > 0) ? DOWN : UP;
+            this.length = abs(gapRow);
+            int rowIncrement = (gapRow > 0) ? 1 : -1;
+            for (int i = 1; i < abs(gapRow); i++) {
+                positionBetween.add(new Position(nowRow + moveDirection * i * rowIncrement, nowColumnChar));
+            }
         }
-        else if (abs (gapRow) ==  abs (gapColumn)){
-            move.setDirection (DIAGNOAL);
-            move.setLength (abs (gapRow) );
-            return move;
-        }
-        else if ((abs (gapRow) == 1 &&  abs (gapColumn) ==2 )
-                ||(abs (gapRow) == 2 &&  abs (gapColumn) ==1 )){
-            move.setDirection(L);
-            move.setLength(0);
-            return move;
-        }
-        else if (gapRow == 0 &&  gapColumn >0){
-            move.setDirection (LEFT);
-            move.setLength (abs (gapColumn) );
-            return move;
-        }
-        else if (gapRow == 0 && gapColumn < 0){
-            move.setDirection (RIGHT);
-            move.setLength (abs (gapColumn) );
-            return move;
-        }
-        else if (gapRow >0 && gapColumn >0){
-            move.setDirection (DOWN);
-            move.setLength (abs (gapRow) );
-            return move;
-        }
-        else if (gapRow < 0 && gapColumn <0){
-            move.setDirection (UP);
-            move.setLength (abs (gapRow) );
-            return move;
-        }
-        return move;
+    }
+
+    public  List <Position> getPositionBetween () {
+        return positionBetween;
+    }
+
+    @Override
+    public String toString() {
+        return "Movement{" +
+                "dir=" + dir +
+                ", length=" + length +
+                '}';
     }
 }

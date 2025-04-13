@@ -1,32 +1,28 @@
 package domain.visualization;
 
+import domain.Enum.Team;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class ConsolePanel extends JPanel {
+
     //출력창
     private JTextArea consoleOutput;
     private JScrollPane consoleScrollPane;
     //입력창
-    private JTextField consoleInput;
-    JPanel inputPanel;
+    public JTextField consoleInput;
+    public JPanel inputPanel;
+
 
     public ConsolePanel() {
+
         setLayout(new BorderLayout());
 
         // 콘솔 출력 영역
-        initializeConsoleOutput();
+        createConsoleOutput();
         // 콘솔 입력 영역
-        initializeConsoleInput ();
-
-
-        consoleInput.addActionListener(e -> {
-            String input = consoleInput.getText();
-            appendToConsole(">> " + input + "\n");
-            processCommand(input);
-            consoleInput.setText("");
-        });
+        createConsoleInput ();
 
 
         // 출력 영역과 입력 영역을 함께 담는 콘솔 패널
@@ -34,7 +30,7 @@ public class ConsolePanel extends JPanel {
         add(inputPanel, BorderLayout.SOUTH);
     }
 
-    private void initializeConsoleOutput(){
+    private void createConsoleOutput(){
         consoleOutput = new JTextArea();
         consoleOutput.setEditable(false);
         consoleOutput.setFont(new Font("Monospaced", Font.PLAIN, 14));
@@ -52,7 +48,7 @@ public class ConsolePanel extends JPanel {
         consoleScrollPane.setBorder(outputBorder);
     }
 
-    private void initializeConsoleInput (){
+    private void createConsoleInput (){
         consoleInput = new JTextField();
         consoleInput.setFont(new Font("Monospaced", Font.PLAIN, 14));
         consoleInput.setBackground(Color.WHITE);
@@ -76,9 +72,23 @@ public class ConsolePanel extends JPanel {
         consoleOutput.append(text);
         consoleOutput.setCaretPosition(consoleOutput.getDocument().getLength());
     }
+    public void printChangeTurn (Team turn){
+        //appendToConsole ($"{turn} 차례입니다. \n ");
+        appendToConsole(String.format("\n%s 차례입니다 \n다음과 같은 형식으로 명령을 입력해주세요 ex(1a 2b)", turn));
+    }
+    public boolean isCommandValid(String consoleText) {
 
-    // CLI 명령 처리 (현재는 단순 에코)
-    private void processCommand(String input) {
-        appendToConsole("You entered: " + input + "\n");
+        if (consoleText == null || consoleText.trim().isEmpty()) {
+            return false;
+        }
+
+        return consoleText.matches("^[1-8][a-h] [1-8][a-h]$");
+    }
+
+    public void initializeConsoleInput(){
+        consoleInput.setText("");
+    }
+    public String getConsoleText () {
+        return consoleInput.getText();
     }
 }

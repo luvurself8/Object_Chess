@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 import domain.ChessBoard;
+import domain.Enum.Team;
+import domain.Movement;
 import domain.Position;
 import domain.piece.Piece;
 import java.util.Map;
@@ -11,12 +13,12 @@ import java.util.Map;
 public class BoardPanel extends JPanel {
     private final int BOARD_SIZE = 8;
     private JLabel[][] boardSquares;
+    ChessBoard chessBoard = new ChessBoard();
 
-    private ChessBoard chessBoard;
-
-    public BoardPanel(ChessBoard chessBoard) {
-        this.chessBoard = chessBoard;
+    public BoardPanel( ) {
         setLayout(new GridLayout(BOARD_SIZE + 2, BOARD_SIZE + 2)); // 10x10 그리드
+        this.setPreferredSize(new Dimension(700, 700));
+        this.setMinimumSize(new Dimension(700, 700));
         initializeBoard();
         initializePieces();
     }
@@ -58,10 +60,21 @@ public class BoardPanel extends JPanel {
     private void initializePieces() {
         Map<Position, Piece> squares = chessBoard.getBoard();
         squares.forEach((position, piece) -> {
-            int row = position.getRow().getRow() - 1;
-            int column = (int) position.getColumn().getColumn() - 96 - 1;
+            int row = position.getRow() - 1;
+            int column = (int) position.getColumn() - 96 - 1;
 
             boardSquares[row][column].setText(piece.getPositionText());
         });
+    }
+
+    public boolean processCommand (Team turn, String consoleText){
+
+        int count = 0;
+        String[] parts = consoleText.split("\\s+");
+        Position sourcePosition = new Position(parts[0]);
+        Position targetPosition = new Position(parts[1]);
+
+
+        return chessBoard.isMovementValid (sourcePosition, targetPosition , turn);
     }
 }
