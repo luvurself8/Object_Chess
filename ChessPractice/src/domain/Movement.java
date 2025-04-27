@@ -13,71 +13,85 @@ public class Movement {
 
     protected Direction dir;
     protected int length;
-    protected List <Position> positionBetween = new ArrayList<>();
-
-    public Movement (Direction dir, int length){
-        this.dir = dir;
-        this.length = length;
-    }
+    protected List<Position> positionBetween = new ArrayList<>();
+    protected Team team;
 
     private static final char COLUMN_START = 'a';
 
-    public Movement(Position source, Position target, Team team) {
-        int nowRow = source.getRow();
-        char nowColumnChar = source.getColumn();
+    public Movement(Position sourcePosition, Position targetPosition, Team team) {
+        this.team = team;
+        int nowRow = sourcePosition.getRow();
+        char nowColumnChar = sourcePosition.getColumn();
         int nowColumn = nowColumnChar - COLUMN_START;
 
-        int targetRow = target.getRow();
-        char targetColumnChar = target.getColumn();
-        int targetColumn = targetColumnChar - COLUMN_START;
+        int targetRow = targetPosition.getRow();
+        char targetColumnChar = targetPosition.getColumn();
+        int targetColumn = targetPosition.getColumn() - COLUMN_START;
 
         int rowDiff = targetRow - nowRow;
         int colDiff = targetColumn - nowColumn;
 
-        int moveDirection = (team == Team.BLACK) ? -1 : 1;
+        int gapRow = targetRow - nowRow;
+        int gapColumn = targetColumn - nowColumn;
 
-        int gapRow = moveDirection * rowDiff;
-        int gapColumn = moveDirection * colDiff;
+        int colIncrement = (gapColumn > 0) ? 1 : -1;
+        int rowIncrement = (gapRow > 0) ? 1 : -1;
 
-        if (gapRow == 0 && gapColumn == 0) {
-            throw new IllegalArgumentException("Same Position");
-        } else if (abs(gapRow) == abs(gapColumn)) {
+        if (gapRow == gapColumn) {
             this.dir = DIAGNOAL;
             this.length = abs(gapRow);
-            int rowIncrement = (gapRow > 0) ? 1 : -1;
-            int colIncrement = (gapColumn > 0) ? 1 : -1;
             for (int i = 1; i < abs(gapRow); i++) {
-                positionBetween.add(new Position(nowRow + moveDirection * i * rowIncrement, (char) (nowColumnChar + i * colIncrement)));
+                this.positionBetween.add(new Position(nowRow + i * rowIncrement, (char) (nowColumnChar + i * rowIncrement)));
             }
         } else if ((abs(gapRow) == 1 && abs(gapColumn) == 2) || (abs(gapRow) == 2 && abs(gapColumn) == 1)) {
             this.dir = L;
             this.length = Math.max(abs(gapRow), abs(gapColumn));
             if (abs(gapRow) == 1 && abs(gapColumn) == 2) {
-                positionBetween.add(new Position(targetRow, (char) (nowColumnChar + moveDirection * 1)));
-                positionBetween.add(new Position(targetRow, (char) (nowColumnChar + moveDirection * 2)));
+                this.positionBetween.add(new Position(targetRow, (char) (nowColumnChar + colIncrement * 1)));
+                this.positionBetween.add(new Position(targetRow, (char) (nowColumnChar + colIncrement * 2)));
             } else { // abs(gapRow) == 2 && abs(gapColumn) == 1
-                positionBetween.add(new Position(nowRow + moveDirection * 1, targetColumnChar));
-                positionBetween.add(new Position(nowRow + moveDirection * 2, targetColumnChar));
+                this.positionBetween.add(new Position(nowRow + rowIncrement * 1, targetColumnChar));
+                this.positionBetween.add(new Position(nowRow + rowIncrement * 2, targetColumnChar));
             }
         } else if (gapRow == 0 && gapColumn != 0) {
-            this.dir = (gapColumn > 0) ? RIGHT : LEFT;
+            this.dir = HORIZONTAL;
             this.length = abs(gapColumn);
-            int colIncrement = (gapColumn > 0) ? 1 : -1;
             for (int i = 1; i < abs(gapColumn); i++) {
                 positionBetween.add(new Position(nowRow, (char) (nowColumnChar + i * colIncrement)));
             }
         } else if (gapRow != 0 && gapColumn == 0) {
-            this.dir = (gapRow > 0) ? DOWN : UP;
+            this.dir = (gapRow < 0) ? UP : DOWN;
             this.length = abs(gapRow);
-            int rowIncrement = (gapRow > 0) ? 1 : -1;
             for (int i = 1; i < abs(gapRow); i++) {
-                positionBetween.add(new Position(nowRow + moveDirection * i * rowIncrement, nowColumnChar));
+                this.positionBetween.add(new Position(nowRow + rowIncrement * i , nowColumnChar));
             }
+            changeDirection();
+        } else {
+            this.dir = NONE;
         }
     }
 
-    public  List <Position> getPositionBetween () {
-        return positionBetween;
+    public List<Position> getPositionBetween() {
+        return this.positionBetween;
+    }
+
+    public Direction getDirection() {
+        return this.dir;
+    }
+
+    public int getLength() {
+        return this.length;
+    }
+
+    private void changeDirection() {
+        if (this.team == Team.WHITE) {
+            if (this.dir == Direction.UP) {
+                this.dir = Direction.DOWN;
+            }
+            if (this.dir == Direction.DOWN) {
+                this.dir = Direction.UP;
+            }
+        }
     }
 
     @Override
@@ -85,6 +99,8 @@ public class Movement {
         return "Movement{" +
                 "dir=" + dir +
                 ", length=" + length +
+                ", positionBetween=" + positionBetween +
+                ", team=" + team +
                 '}';
     }
 }

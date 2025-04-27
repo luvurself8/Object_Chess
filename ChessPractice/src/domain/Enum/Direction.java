@@ -2,11 +2,9 @@ package domain.Enum;
 
 public enum Direction {
     DIAGNOAL
-    ,LEFT
-    ,RIGHT
+    ,HORIZONTAL
     ,DOWN
     ,UP
     ,L
     ,NONE
-
 }

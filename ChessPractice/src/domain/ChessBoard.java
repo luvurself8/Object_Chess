@@ -3,26 +3,38 @@ package domain;
 import domain.Enum.Direction;
 import domain.Enum.Role;
 import domain.Enum.Team;
+import domain.piece.None;
 import domain.piece.Piece;
+import domain.piece.PieceFactory;
 
 import java.util.*;
 
 public class ChessBoard {
-    private Map<Position, Piece> squares = new HashMap<>();
+    private final Map<Position, Piece> squares = new HashMap<>();
+    private final Map<Role, Piece> caughtPiece = new EnumMap<>(Role.class);
 
     public ChessBoard() {
         initializeChessBoard();
     }
 
     private void initializeChessBoard() {
-        for (Team team : Team.values()) {
-            for (Role role : Role.values()) {
-                for (int order = 1; order <= role.getMaxCount(); order++) {
+        for (int row = 1; row <= 8; row++) {
+            for (char col = 'a'; col <= 'h'; col++) {
+                Position pos = new Position(row, col);
+                squares.put(pos, PieceFactory.create(Team.NONE, Role.NONE, pos, 0));
+            }
+        }
+        initializeTeam(Team.WHITE);
+        initializeTeam(Team.BLACK);
+    }
 
-                    Piece piece = Piece.createPiece(team, role, order);
-                    Position position = piece.getInitialPosition();
-                    squares.put(position, piece);
-                }
+    private void initializeTeam(Team team) {
+        for (Role role : Role.values()) {
+            if (role == Role.NONE) continue;
+
+            for (int order = 1; order <= role.getMaxCount(); order++) {
+                Position pos = role.getInitialPosition(team, role, order);
+                squares.put(pos, PieceFactory.create(team, role, pos, order));
             }
         }
     }
@@ -31,57 +43,54 @@ public class ChessBoard {
         return this.squares;
     }
 
-    public Piece getPiece (Position position) {
+    private Piece getPiece (Position position) {
         return squares.get(position);
     }
 
-    public boolean isMovementValid(Position sourcePosition, Position targetPosition, Team turn) {
-        Piece sourcePiece = getPiece(sourcePosition);
-        Piece targetPiece = getPiece(targetPosition);
-
-        if (sourcePiece == null) return false;
-        if (sourcePiece.getTeam() != turn) return false;
-        if (targetPiece != null && targetPiece.getTeam() == turn) return false;
-
-        Movement move = new Movement(sourcePosition, targetPosition, turn);
-        Role sourceRole = sourcePiece.getRole();
-
-        switch (sourceRole) {
-            case PAWN:
-                // 대각선 공격 (적이 있을 경우만 가능)
-                if (move.dir == Direction.DIAGNOAL && move.length == 1) {
-                    return targetPiece != null && targetPiece.getTeam() != turn;
-                }
-
-                // 직진 - 한 칸 (빈 칸이어야 함)
-                if (move.dir == Direction.UP && move.length == 1) {
-                    return targetPiece == null;
-                }
-
-                // 직진 - 두 칸 (초기 위치에서만 가능, 중간칸도 비어있어야 함)
-                if (move.dir == Direction.UP && move.length == 2) {
-                    return sourcePiece.getInitialPosition() == sourcePosition && targetPiece == null && isPathClear(move);
-                }
-                return false;
-
-            case ROOK:
-            case BISHOP:
-            case QUEEN:
-            case KING:
-            case KNIGHT:
-
-
-            default:
-                return false;
-        }
-    }
-
-    public boolean isPathClear(Movement move) {
+    private boolean isPathClear(Movement move) {
         for (Position position : move.getPositionBetween()){
-            if (getPiece(position) != null){
+            if (getPiece(position).getRole() != Role.NONE){
                 return false;
             }
         }
+        return true;
+    }
+
+    public boolean proceedProcess(Position sourcePosition, Position targetPosition, Team turn){
+        Piece sourcePiece = getPiece(sourcePosition);
+        Piece targetPiece = getPiece(targetPosition);
+
+        if (sourcePiece.getRole() == Role.NONE){
+            return false;
+        }
+        if (sourcePiece.getTeam() != turn) {
+            return false;
+        }
+        if (targetPiece.getTeam() == turn) {
+            return false;
+        }
+
+        Movement move = new Movement(sourcePosition, targetPosition, turn);
+        if (move.getDirection() == Direction.NONE) {
+            return false;
+        }
+        System.out.println(move);
+
+        if(!sourcePiece.canMove(move, targetPiece)){
+            return false;
+        }
+        if (sourcePiece.getRole() != Role.KNIGHT && !isPathClear(move)){
+            return false;
+        }else if (sourcePiece.getRole() == Role.KNIGHT && isPathClear(move)){
+            return false;
+        }
+
+        squares.put(sourcePosition, PieceFactory.create(Team.NONE, Role.NONE, sourcePosition, 0 ) );
+        if (targetPiece.getRole() != Role.NONE) {
+            caughtPiece.put(targetPiece.getRole(), targetPiece);
+        }
+        sourcePiece.setPosition(targetPosition);
+        squares.put(targetPosition, sourcePiece);
 
         return true;
     }

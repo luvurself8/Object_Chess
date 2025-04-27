@@ -44,9 +44,16 @@ public class ChessGame  extends JFrame {
         if(!consolePanel.isCommandValid(consoleText)){
             consolePanel.appendToConsole("\n유효한 명령어를 입력해주세요");
             return;
-        };
+        }
 
-        boardPanel.processCommand( this.turn, consoleText );
+        if(!boardPanel.processCommand( this.turn, consoleText)){
+            consolePanel.appendToConsole("\n유효한 명령이 아닙니다.");
+            return;
+        }
+
+        this.turn = this.turn.getOppositTeam();
+        consolePanel.printChangeTurn(this.turn);
+
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new ChessGame());

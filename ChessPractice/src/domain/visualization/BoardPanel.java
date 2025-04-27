@@ -1,11 +1,8 @@
 package domain.visualization;
-
 import javax.swing.*;
 import java.awt.*;
-
 import domain.ChessBoard;
 import domain.Enum.Team;
-import domain.Movement;
 import domain.Position;
 import domain.piece.Piece;
 import java.util.Map;
@@ -15,7 +12,7 @@ public class BoardPanel extends JPanel {
     private JLabel[][] boardSquares;
     ChessBoard chessBoard = new ChessBoard();
 
-    public BoardPanel( ) {
+    public BoardPanel() {
         setLayout(new GridLayout(BOARD_SIZE + 2, BOARD_SIZE + 2)); // 10x10 그리드
         this.setPreferredSize(new Dimension(700, 700));
         this.setMinimumSize(new Dimension(700, 700));
@@ -36,7 +33,7 @@ public class BoardPanel extends JPanel {
                         label.setText(String.valueOf((char) ('a' + col - 1)));
                     }
                     if ((col == 0 || col == gridSize - 1) && row != 0 && row != gridSize - 1) {
-                        label.setText(String.valueOf(BOARD_SIZE - (row - 1)));
+                        label.setText(String.valueOf(row));
                     }
                     add(label);
                 } else {
@@ -62,19 +59,24 @@ public class BoardPanel extends JPanel {
         squares.forEach((position, piece) -> {
             int row = position.getRow() - 1;
             int column = (int) position.getColumn() - 96 - 1;
-
             boardSquares[row][column].setText(piece.getPositionText());
         });
     }
 
-    public boolean processCommand (Team turn, String consoleText){
-
-        int count = 0;
+    public boolean processCommand(Team turn, String consoleText) {
         String[] parts = consoleText.split("\\s+");
         Position sourcePosition = new Position(parts[0]);
         Position targetPosition = new Position(parts[1]);
 
+        if (sourcePosition.equals(targetPosition)) {
+            return false;
+        }
 
-        return chessBoard.isMovementValid (sourcePosition, targetPosition , turn);
+        if (chessBoard.proceedProcess(sourcePosition, targetPosition, turn)) {
+            initializePieces();
+            return true;
+        }
+
+        return false;
     }
 }

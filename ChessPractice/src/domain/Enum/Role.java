@@ -3,12 +3,13 @@ package domain.Enum;
 import domain.Position;
 
 public enum Role {
-    KING(8, 'e', 1, 1, "♔", "♚"),
-    QUEEN(8, 'd', 1, 1, "♕", "♛"),
-    ROOK(8, 'a', 1, 2, "♖", "♜"), // (order 1 -> 'a', order 2 -> 'h')
-    BISHOP(8, 'c', 1, 2, "♗", "♝"), // (order 1 -> 'c', order 2 -> 'f')
-    KNIGHT(8, 'b', 1, 2, "♘", "♞"), // (order 1 -> 'b', order 2 -> 'g')
-    PAWN(7, 'a', 2, 8, "♙", "♟"); // (order 1 -> 'a', ..., order 8 -> 'h')
+    KING(1, 'e', 8, 1, "♔", "♚"),
+    QUEEN(1, 'd', 8, 1, "♕", "♛"),
+    ROOK(1, 'a', 8, 2, "♖", "♜"), // (order 1 -> 'a', order 2 -> 'h')
+    BISHOP(1, 'c', 8, 2, "♗", "♝"), // (order 1 -> 'c', order 2 -> 'f')
+    KNIGHT(1, 'b', 8, 2, "♘", "♞"), // (order 1 -> 'b', order 2 -> 'g')
+    PAWN(2, 'a', 7, 8, "♙", "♟"), // (order 1 -> 'a', ..., order 8 -> 'h')
+    NONE(0, '0', 0, 0, "", ""); /* (order 1 -> 'a', ..., order 8 -> 'h') */
 
 
     private final int whiteRow;

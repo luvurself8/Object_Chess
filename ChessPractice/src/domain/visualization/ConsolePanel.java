@@ -1,6 +1,7 @@
 package domain.visualization;
 
 import domain.Enum.Team;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -22,7 +23,7 @@ public class ConsolePanel extends JPanel {
         // 콘솔 출력 영역
         createConsoleOutput();
         // 콘솔 입력 영역
-        createConsoleInput ();
+        createConsoleInput();
 
 
         // 출력 영역과 입력 영역을 함께 담는 콘솔 패널
@@ -30,7 +31,7 @@ public class ConsolePanel extends JPanel {
         add(inputPanel, BorderLayout.SOUTH);
     }
 
-    private void createConsoleOutput(){
+    private void createConsoleOutput() {
         consoleOutput = new JTextArea();
         consoleOutput.setEditable(false);
         consoleOutput.setFont(new Font("Monospaced", Font.PLAIN, 14));
@@ -48,7 +49,7 @@ public class ConsolePanel extends JPanel {
         consoleScrollPane.setBorder(outputBorder);
     }
 
-    private void createConsoleInput (){
+    private void createConsoleInput() {
         consoleInput = new JTextField();
         consoleInput.setFont(new Font("Monospaced", Font.PLAIN, 14));
         consoleInput.setBackground(Color.WHITE);
@@ -67,15 +68,18 @@ public class ConsolePanel extends JPanel {
                 TitledBorder.LEADING, TitledBorder.TOP, new Font("Monospaced", Font.BOLD, 14), Color.BLACK);
         inputPanel.setBorder(inputBorder);
     }
+
     // 콘솔 출력 영역에 텍스트 추가
     public void appendToConsole(String text) {
         consoleOutput.append(text);
         consoleOutput.setCaretPosition(consoleOutput.getDocument().getLength());
     }
-    public void printChangeTurn (Team turn){
+
+    public void printChangeTurn(Team turn) {
         //appendToConsole ($"{turn} 차례입니다. \n ");
         appendToConsole(String.format("\n%s 차례입니다 \n다음과 같은 형식으로 명령을 입력해주세요 ex(1a 2b)", turn));
     }
+
     public boolean isCommandValid(String consoleText) {
 
         if (consoleText == null || consoleText.trim().isEmpty()) {
@@ -85,10 +89,11 @@ public class ConsolePanel extends JPanel {
         return consoleText.matches("^[1-8][a-h] [1-8][a-h]$");
     }
 
-    public void initializeConsoleInput(){
+    public void initializeConsoleInput() {
         consoleInput.setText("");
     }
-    public String getConsoleText () {
+
+    public String getConsoleText() {
         return consoleInput.getText();
     }
 }
