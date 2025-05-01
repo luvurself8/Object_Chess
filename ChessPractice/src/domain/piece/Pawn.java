@@ -13,15 +13,13 @@ public class Pawn extends Piece {
     }
 
     public boolean canMove(Movement move, Piece targetPiece) {
-        // 대각선 공격 (적이 있을 경우만 가능)
         if (move.getDirection() == Direction.DIAGNOAL && move.getLength() == 1) {
             return targetPiece.getRole() != Role.NONE && targetPiece.getTeam() != this.team;
         } else if (move.getDirection() == Direction.UP && move.getLength() == 1) {
             return targetPiece.getRole() == Role.NONE;
         } else if (move.getDirection() == Direction.UP && move.getLength() == 2) {
-            return this.getInitialPosition().equals(this.position) && targetPiece.getRole() == Role.NONE;
+            return this.isInitialPosition() && targetPiece.getRole() == Role.NONE;
         }
-
         return false;
     }
 }

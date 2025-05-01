@@ -1,7 +1,6 @@
 package domain.visualization;
 
 import domain.Enum.Team;
-
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -86,7 +85,11 @@ public class ConsolePanel extends JPanel {
             return false;
         }
 
-        return consoleText.matches("^[1-8][a-h] [1-8][a-h]$");
+        if (!consoleText.matches("^[1-8][a-h] [1-8][a-h]$")){
+            return false;
+        }
+
+        return true;
     }
 
     public void initializeConsoleInput() {

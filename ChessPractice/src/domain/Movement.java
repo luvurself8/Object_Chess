@@ -11,13 +11,19 @@ import static java.lang.Math.abs;
 
 public class Movement {
 
-    protected Direction dir;
-    protected int length;
-    protected List<Position> positionBetween = new ArrayList<>();
-    protected Team team;
+    private Direction dir;
+    private int length;
+    private List<Position> positionBetween = new ArrayList<>();
+    private Team team;
 
     private static final char COLUMN_START = 'a';
 
+    /**
+     *
+     * @param sourcePosition
+     * @param targetPosition
+     * @param team
+     */
     public Movement(Position sourcePosition, Position targetPosition, Team team) {
         this.team = team;
         int nowRow = sourcePosition.getRow();
@@ -27,9 +33,6 @@ public class Movement {
         int targetRow = targetPosition.getRow();
         char targetColumnChar = targetPosition.getColumn();
         int targetColumn = targetPosition.getColumn() - COLUMN_START;
-
-        int rowDiff = targetRow - nowRow;
-        int colDiff = targetColumn - nowColumn;
 
         int gapRow = targetRow - nowRow;
         int gapColumn = targetColumn - nowColumn;
@@ -46,13 +49,6 @@ public class Movement {
         } else if ((abs(gapRow) == 1 && abs(gapColumn) == 2) || (abs(gapRow) == 2 && abs(gapColumn) == 1)) {
             this.dir = L;
             this.length = Math.max(abs(gapRow), abs(gapColumn));
-            if (abs(gapRow) == 1 && abs(gapColumn) == 2) {
-                this.positionBetween.add(new Position(targetRow, (char) (nowColumnChar + colIncrement * 1)));
-                this.positionBetween.add(new Position(targetRow, (char) (nowColumnChar + colIncrement * 2)));
-            } else { // abs(gapRow) == 2 && abs(gapColumn) == 1
-                this.positionBetween.add(new Position(nowRow + rowIncrement * 1, targetColumnChar));
-                this.positionBetween.add(new Position(nowRow + rowIncrement * 2, targetColumnChar));
-            }
         } else if (gapRow == 0 && gapColumn != 0) {
             this.dir = HORIZONTAL;
             this.length = abs(gapColumn);

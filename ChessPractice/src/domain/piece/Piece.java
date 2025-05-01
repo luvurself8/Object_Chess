@@ -1,4 +1,5 @@
 package domain.piece;
+
 import domain.Movement;
 import domain.Position;
 import domain.Enum.Role;
@@ -35,11 +36,15 @@ public abstract class Piece {
     }
 
     public String getPositionText() {
-        return role.getPositionText(this.team);
+        return this.role.getPositionText(this.team);
     }
 
     public Position getInitialPosition() {
-        return role.getInitialPosition(this.team, this.role, this.order);
+        return this.role.getInitialPosition(this.team, this.order);
+    }
+
+    public boolean isInitialPosition() {
+        return this.getInitialPosition().equals(this.position);
     }
 
     public abstract boolean canMove(Movement move, Piece targetPiece);

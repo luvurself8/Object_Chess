@@ -29,11 +29,7 @@ public enum Role {
         this.blackTextString = blackTextString;
     }
 
-    public Position getPosition(Team team, int order) {
-        if (order < 1 || order > maxCount) {
-            throw new IllegalArgumentException("Invalid order for role: " + this.name());
-        }
-
+    public Position getInitialPosition(Team team, int order) {
         int row = (team == Team.WHITE) ? whiteRow : blackRow;
         char column = (maxCount == 1) ? whiteColumn : (char) (whiteColumn + order - 1);
         if (this == ROOK) column = (order == 1) ? 'a' : 'h';
@@ -41,10 +37,6 @@ public enum Role {
         if (this == KNIGHT) column = (order == 1) ? 'b' : 'g';
         if (this == PAWN) column = (char) (whiteColumn + order - 1);
         return new Position(row, column);
-    }
-
-    public Position getInitialPosition(Team team, Role role, int order) {
-        return valueOf(role.name()).getPosition(team, order);
     }
 
     public int getMaxCount() {

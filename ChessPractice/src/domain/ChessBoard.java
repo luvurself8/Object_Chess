@@ -20,8 +20,8 @@ public class ChessBoard {
     private void initializeChessBoard() {
         for (int row = 1; row <= 8; row++) {
             for (char col = 'a'; col <= 'h'; col++) {
-                Position pos = new Position(row, col);
-                squares.put(pos, PieceFactory.create(Team.NONE, Role.NONE, pos, 0));
+                Position position = new Position(row, col);
+                squares.put(position, PieceFactory.create(Team.NONE, Role.NONE, position, 0));
             }
         }
         initializeTeam(Team.WHITE);
@@ -33,8 +33,8 @@ public class ChessBoard {
             if (role == Role.NONE) continue;
 
             for (int order = 1; order <= role.getMaxCount(); order++) {
-                Position pos = role.getInitialPosition(team, role, order);
-                squares.put(pos, PieceFactory.create(team, role, pos, order));
+                Position position = role.getInitialPosition(team, order);
+                squares.put(position, PieceFactory.create(team, role, position, order));
             }
         }
     }
@@ -57,6 +57,7 @@ public class ChessBoard {
     }
 
     public boolean proceedProcess(Position sourcePosition, Position targetPosition, Team turn){
+
         Piece sourcePiece = getPiece(sourcePosition);
         Piece targetPiece = getPiece(targetPosition);
 
@@ -79,9 +80,7 @@ public class ChessBoard {
         if(!sourcePiece.canMove(move, targetPiece)){
             return false;
         }
-        if (sourcePiece.getRole() != Role.KNIGHT && !isPathClear(move)){
-            return false;
-        }else if (sourcePiece.getRole() == Role.KNIGHT && isPathClear(move)){
+        if (!isPathClear(move)){
             return false;
         }
 

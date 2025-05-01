@@ -9,7 +9,6 @@ public class None extends Piece {
     protected None(Team team, Role role, Position position, int order) {
         super(team, role, position, order);
     }
-
     public boolean canMove(Movement move, Piece targetPiece) {
         return false;
     }
