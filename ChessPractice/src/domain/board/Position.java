@@ -1,4 +1,4 @@
-package domain;
+package domain.board;
 
 import static java.util.Objects.*;
 
@@ -45,4 +45,5 @@ public class Position {
     public int hashCode() {
         return hash(row, column);
     }
+
 }

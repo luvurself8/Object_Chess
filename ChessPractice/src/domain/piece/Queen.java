@@ -1,21 +1,44 @@
 package domain.piece;
 
 import domain.Enum.Direction;
-import domain.Movement;
-import domain.Position;
+import domain.Enum.MoveType;
+import domain.board.Movement;
+import domain.board.Position;
 import domain.Enum.Role;
 import domain.Enum.Team;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static domain.board.BoardUtil.*;
+
+
 public class Queen extends Piece {
 
-    protected Queen(Team team, Role role, Position position, int order) {
-        super(team, role, position, order);
+    protected Queen(Team team, Role role, Position position) {
+        super(team, role, position);
     }
 
-    public boolean canMove(Movement move, Piece targetPiece) {
-        if (move.getDirection() != Direction.NONE) {
-            return true;
+    @Override
+    public List<Movement> getMovablePositions(Map<Position, Piece> board) {
+
+        List<Movement> movableList = new ArrayList<>();
+
+        // 모든 방향에서 한 칸 이동 가능한 위치 수집
+        List<Position> candidatePositions = new ArrayList<>();
+        for (int i =1 ; i<=MAX_STEP; i++) {
+            candidatePositions.addAll(move( this.team, this.position, Direction.DIAGONAL, i));
+            candidatePositions.addAll(move( this.team, this.position, Direction.HORIZONTAL,i));
+            candidatePositions.addAll(move( this.team, this.position, Direction.VERTICAL,i));
         }
-        return false;
+
+        for (Position targetPosition : candidatePositions) {
+            Piece targetPiece = board.get(targetPosition);
+            if(!targetPiece.equalTeam(this.team) && isPathClear(getPath(this.position, targetPosition), board)){
+                movableList.add(new Movement(this,targetPiece, MoveType.MOVE));
+            }
+        }
+        return movableList;
     }
 }

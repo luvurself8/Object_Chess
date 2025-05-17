@@ -1,50 +1,90 @@
 package domain.Enum;
 
-import domain.Position;
+import domain.board.Position;
+
+import java.util.List;
+import java.util.stream.IntStream;
 
 public enum Role {
-    KING(1, 'e', 8, 1, "♔", "♚"),
-    QUEEN(1, 'd', 8, 1, "♕", "♛"),
-    ROOK(1, 'a', 8, 2, "♖", "♜"), // (order 1 -> 'a', order 2 -> 'h')
-    BISHOP(1, 'c', 8, 2, "♗", "♝"), // (order 1 -> 'c', order 2 -> 'f')
-    KNIGHT(1, 'b', 8, 2, "♘", "♞"), // (order 1 -> 'b', order 2 -> 'g')
-    PAWN(2, 'a', 7, 8, "♙", "♟"), // (order 1 -> 'a', ..., order 8 -> 'h')
-    NONE(0, '0', 0, 0, "", ""); /* (order 1 -> 'a', ..., order 8 -> 'h') */
 
+    KING(
+            List.of(new Position(1, 'e')),
+            List.of(new Position(8, 'e')),
+            "♔", "♚"
+    ),
+    QUEEN(
+            List.of(new Position(1, 'd')),
+            List.of(new Position(8, 'd')),
+            "♕", "♛"
+    ),
+    ROOK(
+            List.of(new Position(1, 'a'), new Position(1, 'h')),
+            List.of(new Position(8, 'a'), new Position(8, 'h')),
+            "♖", "♜"
+    ),
+    BISHOP(
+            List.of(new Position(1, 'c'), new Position(1, 'f')),
+            List.of(new Position(8, 'c'), new Position(8, 'f')),
+            "♗", "♝"
+    ),
+    KNIGHT(
+            List.of(new Position(1, 'b'), new Position(1, 'g')),
+            List.of(new Position(8, 'b'), new Position(8, 'g')),
+            "♘", "♞"
+    ),
+    PAWN(
+            IntStream.range(0, 8)
+                    .mapToObj(i -> new Position(2, (char)('a' + i)))
+                    .toList(),
+            IntStream.range(0, 8)
+                    .mapToObj(i -> new Position(7, (char)('a' + i)))
+                    .toList(),
+            "♙", "♟"
+    ),
+    NONE(
+            List.of(),
+            List.of(),
+            "", ""
+    );
 
-    private final int whiteRow;
-    private final char whiteColumn;
-    private final int blackRow;
-    private final int maxCount; // 기물 개수 (킹 1개, 폰 8개 등)
+    private final List<Position> whitePositions;
+    private final List<Position> blackPositions;
     private final String whiteTextString;
     private final String blackTextString;
 
-
-    Role (int whiteRow, char whiteColumn, int blackRow, int maxCount, String whiteTextString, String blackTextString) {
-        this.whiteRow = whiteRow;
-        this.whiteColumn = whiteColumn;
-        this.blackRow = blackRow;
-        this.maxCount = maxCount;
+    Role(List<Position> whitePositions, List<Position> blackPositions,
+         String whiteTextString, String blackTextString) {
+        this.whitePositions = whitePositions;
+        this.blackPositions = blackPositions;
         this.whiteTextString = whiteTextString;
         this.blackTextString = blackTextString;
     }
 
-    public Position getInitialPosition(Team team, int order) {
-        int row = (team == Team.WHITE) ? whiteRow : blackRow;
-        char column = (maxCount == 1) ? whiteColumn : (char) (whiteColumn + order - 1);
-        if (this == ROOK) column = (order == 1) ? 'a' : 'h';
-        if (this == BISHOP) column = (order == 1) ? 'c' : 'f';
-        if (this == KNIGHT) column = (order == 1) ? 'b' : 'g';
-        if (this == PAWN) column = (char) (whiteColumn + order - 1);
-        return new Position(row, column);
-    }
-
-    public int getMaxCount() {
-        return maxCount;
+    public List<Position> getInitialPositions(Team team) {
+        return (team == Team.WHITE) ? whitePositions : blackPositions;
     }
 
     public String getPositionText(Team team) {
         return (team == Team.WHITE) ? whiteTextString : blackTextString;
+    }
+
+    public static Role getRole(String input) {
+        for (Role role : Role.values()) {
+            if (role.name().equalsIgnoreCase(input)) {
+                return role;
+            }
+        }
+        return NONE;
+    }
+
+    public boolean isValidPromotionChoice(){
+        return this == QUEEN || this == ROOK || this == BISHOP || this == KNIGHT;
+    }
+    public static boolean isValidPromotionChoice(String role) {
+        return role.equalsIgnoreCase(QUEEN.name()) ||
+                role.equalsIgnoreCase(ROOK.name()) ||
+                role.equalsIgnoreCase(BISHOP.name()) ||
+                role.equalsIgnoreCase(KNIGHT.name());
     }
 
 }

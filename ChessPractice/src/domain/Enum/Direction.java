@@ -1,10 +1,10 @@
 package domain.Enum;
 
 public enum Direction {
-    DIAGNOAL
-    ,HORIZONTAL
-    ,DOWN
+    HORIZONTAL
+    ,VERTICAL
+    ,DIAGONAL
+    ,UP_DIAGONAL // 폰의 특수 움직임
     ,UP
-    ,L
-    ,NONE
+    , DOWN, L_SHAPE
 }

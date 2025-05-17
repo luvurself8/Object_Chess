@@ -1,6 +1,7 @@
 package domain.visualization;
 
 import domain.Enum.Team;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -69,14 +70,13 @@ public class ConsolePanel extends JPanel {
     }
 
     // 콘솔 출력 영역에 텍스트 추가
-    public void appendToConsole(String text) {
+    public void printMessage(String text) {
         consoleOutput.append(text);
         consoleOutput.setCaretPosition(consoleOutput.getDocument().getLength());
     }
 
     public void printChangeTurn(Team turn) {
-        //appendToConsole ($"{turn} 차례입니다. \n ");
-        appendToConsole(String.format("\n%s 차례입니다 \n다음과 같은 형식으로 명령을 입력해주세요 ex(1a 2b)", turn));
+        printMessage(String.format("\nIt's %s turn.  \n enter the piece position you want to move (1a)", turn));
     }
 
     public boolean isCommandValid(String consoleText) {
@@ -92,11 +92,11 @@ public class ConsolePanel extends JPanel {
         return true;
     }
 
-    public void initializeConsoleInput() {
+    public void clearInput() {
         consoleInput.setText("");
     }
 
-    public String getConsoleText() {
-        return consoleInput.getText();
+    public String getInput() {
+        return consoleInput.getText().trim();
     }
 }
