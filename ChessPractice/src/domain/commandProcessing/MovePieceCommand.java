@@ -4,9 +4,9 @@ import domain.Enum.GameStatus;
 import domain.Enum.MoveType;
 import domain.Enum.Role;
 import domain.Enum.Team;
-import domain.board.Movement;
+import domain.move.Movement;
 import domain.board.Position;
-import domain.board.PromotionMovement;
+import domain.move.PromotionMovement;
 
 
 public class MovePieceCommand extends Command {
@@ -36,7 +36,7 @@ public class MovePieceCommand extends Command {
     }
 
     public boolean isGameEnd (){
-        return this.move.isMovementCatchKing();
+        return this.move.getCatchKing();
     }
 
     @Override

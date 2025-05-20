@@ -71,12 +71,17 @@ public class ConsolePanel extends JPanel {
 
     // 콘솔 출력 영역에 텍스트 추가
     public void printMessage(String text) {
+        consoleOutput.append("\n");
         consoleOutput.append(text);
         consoleOutput.setCaretPosition(consoleOutput.getDocument().getLength());
     }
 
     public void printChangeTurn(Team turn) {
-        printMessage(String.format("\nIt's %s turn.  \n enter the piece position you want to move (1a)", turn));
+        printMessage(String.format("\nIt's %s turn.", turn));
+    }
+
+    public void printInitialTurn(Team turn) {
+        printMessage(String.format("\nIt's %s turn.\nSelect a piece to move. (1a)", turn));
     }
 
     public boolean isCommandValid(String consoleText) {

@@ -4,8 +4,8 @@ import domain.Enum.Direction;
 import domain.Enum.MoveType;
 import domain.Enum.Role;
 import domain.Enum.Team;
-import domain.board.CastleMovement;
-import domain.board.Movement;
+import domain.move.CastleMovement;
+import domain.move.Movement;
 import domain.board.Position;
 
 import java.util.ArrayList;
@@ -28,11 +28,12 @@ public class King extends Piece {
         List<Position> candidatePositions = new ArrayList<>();
         candidatePositions.addAll(move(this.team, this.position, Direction.DIAGONAL,1));
         candidatePositions.addAll(move(this.team, this.position, Direction.HORIZONTAL,1));
+        candidatePositions.addAll(move(this.team, this.position, Direction.VERTICAL,1));
 
         for (Position targetPosition : candidatePositions) {
             Piece targetPiece = board.get(targetPosition);
             if(!targetPiece.equalTeam(this.team)){
-                movableList.add(new Movement(this,targetPiece, MoveType.MOVE));
+                movableList.add(new Movement(this.position,targetPosition, MoveType.MOVE));
             }
         }
 
@@ -41,27 +42,39 @@ public class King extends Piece {
         return movableList;
     }
 
-    private List<Movement> getCastlingPosition(Map<Position, Piece> board) {
+    private List<CastleMovement> getCastlingPosition(Map<Position, Piece> board) {
+        List<CastleMovement> castleMovementList = new ArrayList<>();
 
-        List<Movement> movableList = new ArrayList<>();
+        int row = (this.team == Team.BLACK) ? 8 : 1;
+        Position kingInitialPosition = Role.KING.getInitialPositions(this.team).getFirst();
 
-        if (hasMoved()) return movableList;
-        for(CastleMovement move : getCastlingMovement(this.team)){
-            if (!(this.position == move.getSourcePosition())){
-                continue;
-            }
-            Position targetPosition = move.getTargetPosition();
-            Piece targetPiece = board.get(targetPosition);
-            if (targetPiece != null && targetPiece.equalTeam(this.team)) {
-                if (targetPiece instanceof Rook ){
-                    if (((Rook)targetPiece).canBeTargetedByCastling(this.team)){
-                        move.setKingPiece(this);
-                        move.setRookPiece(targetPiece);
-                        movableList.add(move);
-                    }
-                }
-            }
+        if (!this.position.equals(kingInitialPosition) || this.hasMoved()) {
+            return castleMovementList;
         }
-        return movableList;
+
+        // 킹사이드 체크
+        addCastleIfValid(castleMovementList, board, row, 'g');
+
+        // 퀸사이드 체크
+        addCastleIfValid(castleMovementList, board, row, 'c');
+
+        return castleMovementList;
+    }
+
+    private void addCastleIfValid(List<CastleMovement> list, Map<Position, Piece> board,
+                                  int row, char kingTargetCol) {
+
+        //Position rookSourcePosition = new Position(row, rookSourceCol);
+        Position kingTargetPosition = new Position(row, kingTargetCol);
+        CastleMovement castleMovement = new CastleMovement(this.position, kingTargetPosition);
+
+        if (!isPathClear(getPath(this.position, castleMovement.getRookSourcePosition()), board)) return;
+
+        Piece rookSourcePiece = board.get(castleMovement.getRookSourcePosition());
+
+        if (!(rookSourcePiece instanceof Rook)) return;
+        if (!(((Rook) rookSourcePiece).canBeTargetedByCastling(this.team))) return;
+
+        list.add(castleMovement);
     }
 }

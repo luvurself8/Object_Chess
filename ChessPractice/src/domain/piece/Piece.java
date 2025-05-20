@@ -1,16 +1,14 @@
 package domain.piece;
 
-import domain.Enum.MoveType;
 import domain.Enum.PieceStatus;
-import domain.board.CastleMovement;
-import domain.board.Movement;
-import domain.board.Position;
 import domain.Enum.Role;
 import domain.Enum.Team;
+import domain.move.CastleMovement;
+import domain.move.Movement;
+import domain.board.Position;
 
 import java.util.List;
 import java.util.Map;
-import static domain.board.BoardUtil.*;
 
 public abstract class Piece {
 
@@ -48,19 +46,16 @@ public abstract class Piece {
         this.status = PieceStatus.MOVED;
         this.lastMove = move;
         if (move instanceof CastleMovement && this.equalRole(Role.ROOK)) {
-            this.position = ((CastleMovement) move).getRookSourcePosition();
+            this.position = ((CastleMovement) move).getRookTargetPosition();
         }
-        this.position = move.getTargetPosition();
-    }
-
-    public void deactivatePiece()  {
-        this.status = PieceStatus.DEACTIVATED;
+        else{
+            this.position = move.getTargetPosition();
+        }
     }
 
     protected boolean hasMoved(){
         return this.status == PieceStatus.MOVED;
     }
-
 
     @Override
     public String toString() {

@@ -1,13 +1,14 @@
-package domain.board;
+package domain.move;
 
 import domain.Enum.MoveType;
+import domain.board.Position;
 import domain.piece.Piece;
 
 public class EnPassantMovement extends Movement {
-    private Piece enPassantPiece;
+    private final Piece enPassantPiece;
 
-    public EnPassantMovement(Piece sourcePiece, Piece targetPiece, Piece enPassantPiece) {
-        super(sourcePiece, targetPiece, MoveType.EN_PASSANT);
+    public EnPassantMovement(Position sourcePosition, Position targetPosition, Piece enPassantPiece) {
+        super(sourcePosition, targetPosition, MoveType.EN_PASSANT);
         this.enPassantPiece =  enPassantPiece;
     }
 

@@ -18,30 +18,33 @@ public abstract class Command {
         this.status = CommandStatus.PROCESSING;
         this.team = team;
    }
+
    public CommandStatus getStatus() {
           return status;
    }
-   public String getOutputMessage() {
 
+   public String getOutputMessage() {
        return outputMessage;
    }
-   public String getCommandMessage() {
-             return commandMessage;
-   }
+
    public Team getTeam() {
        return team;
    }
+
    protected boolean isPositionStringValid (String positionString) {
        String regex = String.format("[%d-%d][%c-%c]", ROW_START, ROW_END, COLUMN_START, COLUMN_END);
        return positionString.matches(regex);
    }
+
    public void setErrorMessage(String message) {
           this.outputMessage = message;
           this.status = CommandStatus.FAILED;
    }
+
    public void setSuccessMessage(String message) {
           this.outputMessage = message;
           this.status = CommandStatus.SUCCESS;
    }
+
    public abstract boolean isCommandMessageValid();
 }

@@ -6,5 +6,6 @@ public enum Direction {
     ,DIAGONAL
     ,UP_DIAGONAL // 폰의 특수 움직임
     ,UP
-    , DOWN, L_SHAPE
+    ,DOWN
+    ,L_SHAPE
 }

@@ -1,7 +1,7 @@
 package domain.commandProcessing;
 import domain.Enum.GameStatus;
 import domain.Enum.Team;
-import domain.board.Movement;
+import domain.move.Movement;
 import domain.board.Position;
 
 import java.util.List;
@@ -42,7 +42,6 @@ public class SelectPieceCommand extends Command {
 
     @Override
     public boolean isCommandMessageValid(){
-
         if(commandMessage.isBlank()){
             setErrorMessage("Command message is empty");
             return false;

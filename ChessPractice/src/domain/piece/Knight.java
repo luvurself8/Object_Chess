@@ -4,7 +4,7 @@ import domain.Enum.Direction;
 import domain.Enum.MoveType;
 import domain.Enum.Role;
 import domain.Enum.Team;
-import domain.board.Movement;
+import domain.move.Movement;
 import domain.board.Position;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class Knight extends Piece{
         for (Position targetPosition : candidatePositions) {
             Piece targetPiece = board.get(targetPosition);
             if(!targetPiece.equalTeam(this.team)){
-                movableList.add(new Movement(this,targetPiece, MoveType.MOVE));
+                movableList.add(new Movement(this.position,targetPosition, MoveType.MOVE));
             }
         }
         return movableList;

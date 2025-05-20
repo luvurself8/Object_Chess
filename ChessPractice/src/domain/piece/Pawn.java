@@ -4,8 +4,8 @@ import domain.Enum.Direction;
 import domain.Enum.MoveType;
 import domain.Enum.Role;
 import domain.Enum.Team;
-import domain.board.EnPassantMovement;
-import domain.board.Movement;
+import domain.move.EnPassantMovement;
+import domain.move.Movement;
 import domain.board.Position;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class Pawn extends Piece {
             Position targetPosition = move(this.team, this.position, Direction.UP,2).getFirst();
             Piece targetPiece = board.get(targetPosition);
             if(targetPiece instanceof EmptyPiece && isPathClear(getPath(this.position, targetPosition), board)) {
-                movableList.add(new Movement (this, targetPiece, MoveType.PAWN_TWO_STEP));
+                movableList.add(new Movement (this.position, targetPosition, MoveType.PAWN_TWO_STEP));
             }
         }
 
@@ -35,12 +35,7 @@ public class Pawn extends Piece {
         Position targetPosition = move(this.team, this.position, Direction.UP,1).getFirst();
         Piece targetPiece = board.get(targetPosition);
         if(targetPiece instanceof EmptyPiece) {
-            if(canPromote(targetPosition)){
-                movableList.add(new Movement (this,targetPiece, MoveType.PROMOTE));
-            }
-            else{
-                movableList.add(new Movement (this, targetPiece, MoveType.MOVE));
-            }
+            movableList.add(new Movement(this.position, targetPosition, canPromote(targetPosition) ? MoveType.PROMOTE : MoveType.MOVE));
         }
 
         // 대각선 공격
@@ -55,21 +50,14 @@ public class Pawn extends Piece {
 
             Piece targetPiece = board.get(targetPosition);
             Piece enemyPieceForEnPassant = board.get(move(this.team, targetPosition, Direction.DOWN,1).getFirst());
-            System.out.println(move(this.team, targetPosition, Direction.DOWN,1).getFirst());
-            System.out.println(enemyPieceForEnPassant);
-            if (targetPiece instanceof EmptyPiece
-                && enemyPieceForEnPassant instanceof Pawn) {
+
+            if (targetPiece instanceof EmptyPiece && enemyPieceForEnPassant instanceof Pawn) {
                 if(((Pawn)enemyPieceForEnPassant).canBeTargetedByEnPassant(this.team)) {
-                    movableList.add(new EnPassantMovement(this, targetPiece, enemyPieceForEnPassant));
+                    movableList.add(new EnPassantMovement(this.position, targetPosition, enemyPieceForEnPassant));
                 }
             }
             if (targetPiece.equalTeam(this.team.getOppositTeam())){
-                if(canPromote(targetPosition)){
-                    movableList.add(new Movement (this, targetPiece, MoveType.PROMOTE));
-                }
-                else{
-                    movableList.add(new Movement (this, targetPiece, MoveType.MOVE));
-                }
+                movableList.add(new Movement(this.position, targetPosition, canPromote(targetPosition) ? MoveType.PROMOTE : MoveType.MOVE));
             }
         }
         return movableList;
@@ -81,11 +69,9 @@ public class Pawn extends Piece {
     }
 
     public boolean canBeTargetedByEnPassant(Team team){
-        
         if(!this.hasMoved()){
-            System.out.println("enemyPieceForEnPassant 안움직임");
             return false;
         }
-        return this.lastMove.equals(MoveType.PAWN_TWO_STEP) && (this.team).equals(team.getOppositTeam());
+        return this.lastMove.isMoveType(MoveType.PAWN_TWO_STEP) && (this.team).equals(team.getOppositTeam());
     }
 }

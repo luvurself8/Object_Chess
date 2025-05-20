@@ -1,14 +1,17 @@
 package domain.visualization;
-import javax.swing.*;
-import java.awt.*;
 
 import domain.Enum.MoveType;
-import domain.Enum.Role;
-import domain.board.*;
 import domain.Enum.Team;
-import domain.commandProcessing.*;
+import domain.board.*;
+import domain.commandProcessing.MovePieceCommand;
+import domain.commandProcessing.SelectPieceCommand;
+import domain.move.CastleMovement;
+import domain.move.Movement;
+import domain.move.PromotionMovement;
 import domain.piece.Piece;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -74,29 +77,35 @@ public class BoardPanel extends JPanel {
         List<Movement> movableList = chessBoard.getMovementList(team, sourcePosition);
         command.setMovableList(movableList);
     }
+
     public void processCommand (MovePieceCommand command){
         Team team = command.getTeam();
         Movement move = command.getMovement();
 
         if(move instanceof PromotionMovement){
             chessBoard.executePromotion(team, (PromotionMovement) move);
-            command.setSuccessMessage("Promotion successful");
+            command.setSuccessMessage("Promotion Success!");
         }
         else if (move instanceof CastleMovement){
             if(!chessBoard.isCastleValid(team, (CastleMovement) move)){
                 command.setErrorMessage("Invalid castle move - King can be under attack when moving");
                 return;
             }
-            chessBoard.executeCastle(team, (CastleMovement) move);
+            else{
+                chessBoard.executeCastle((CastleMovement) move);
+                command.setSuccessMessage("Castling Success!");
+            }
         }
         else {
-            chessBoard.executeMove(move);
             if (move.isMoveType(MoveType.EN_PASSANT)) {
-                command.setSuccessMessage("En Passant move successful");
+                chessBoard.executeMove(move);
+                command.setSuccessMessage("En Passant Success!");
             } else {
-                command.setSuccessMessage("Move successful");
+                chessBoard.executeMove(move);
+                command.setSuccessMessage("Move Success!");
             }
         }
         initializePieces();
     }
+
 }

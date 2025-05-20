@@ -2,7 +2,7 @@ package domain.piece;
 
 import domain.Enum.Role;
 import domain.Enum.Team;
-import domain.board.Movement;
+import domain.move.Movement;
 import domain.board.Position;
 
 import java.util.ArrayList;
